@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ECHO - 靠近我 听见我</title>
     <style>
         :root {
@@ -18,7 +18,7 @@
         
         body {
             margin: 0; padding: 0;
-            font-family: 'Times New Roman', 'Songti SC', serif;
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Songti SC', serif;
             background-color: var(--bg-deep);
             height: 100vh; color: var(--text-main);
             overflow: hidden; position: relative;
@@ -33,91 +33,67 @@
         @keyframes breathe { 0% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0.4; transform: scale(1.1); } }
 
         .card-river { position: fixed; inset: 0; z-index: 1; perspective: 800px; overflow: hidden; }
-        .phantom-card { position: absolute; background: rgba(255, 77, 109, 0.05); border: 1px solid rgba(255, 77, 109, 0.1); border-radius: 15px; width: 200px; height: 280px; animation: flowUp linear infinite; }
+        .phantom-card { position: absolute; background: rgba(255, 77, 109, 0.05); border: 1px solid rgba(255, 77, 109, 0.1); border-radius: 15px; width: 150px; height: 210px; animation: flowUp linear infinite; }
         @keyframes flowUp { 0% { transform: translate3d(var(--x), 110vh, var(--z)) rotateX(20deg); opacity: 0; } 100% { transform: translate3d(var(--x), -20vh, var(--z)) rotateX(20deg); opacity: 0; } }
 
         /* UI架构 */
         .ui-layer { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
-        header { padding: 30px; text-align: center; position: relative; }
-        .settings-trigger { position: absolute; top: 25px; right: 25px; font-size: 36px; opacity: 0.6; cursor: pointer; transition: 0.3s; z-index: 30; }
-        .logo { font-size: 2.5rem; letter-spacing: 8px; font-weight: bold; background: linear-gradient(to bottom, #fff, var(--soft-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255, 77, 109, 0.5); }
-        .slogan { font-size: 0.8rem; letter-spacing: 4px; color: var(--primary-pink); margin-top: 5px; opacity: 0.8; font-style: italic; }
+        header { padding: 20px 30px; text-align: center; position: relative; }
+        .settings-trigger { position: absolute; top: 20px; right: 25px; font-size: 28px; opacity: 0.6; cursor: pointer; transition: 0.3s; z-index: 30; }
+        .logo { font-size: 2rem; letter-spacing: 6px; font-weight: bold; background: linear-gradient(to bottom, #fff, var(--soft-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255, 77, 109, 0.5); }
+        .slogan { font-size: 0.75rem; letter-spacing: 3px; color: var(--primary-pink); margin-top: 4px; opacity: 0.8; font-style: italic; }
 
-        /* 核心卡牌舞台 */
-        .stage { flex: 1; display: flex; justify-content: center; align-items: center; perspective: 1500px; }
+        /* 核心卡牌舞台 - 调整高度和尺寸 */
+        .stage { flex: 1; display: flex; justify-content: center; align-items: center; perspective: 1500px; padding: 0 20px; }
         .main-card {
-            width: 80%; max-width: 320px; height: 440px;
+            width: 100%; max-width: 300px; height: 380px;
             background: rgba(30, 10, 15, 0.6); backdrop-filter: blur(25px);
             border: 2px solid var(--glass-border); border-radius: 20px;
-            display: flex; justify-content: center; align-items: center; padding: 35px; text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            display: flex; justify-content: center; align-items: center; padding: 25px; text-align: center;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
             transform-style: preserve-3d;
             opacity: 0;
             transition: opacity 0.3s;
         }
 
-        /* 动画状态：洗牌 */
-        .shuffling {
-            opacity: 0.6;
-            filter: blur(1px);
-            animation: shuffleSoft 0.2s infinite alternate ease-in-out;
-        }
-        @keyframes shuffleSoft {
-            0% { transform: scale(0.9) rotateZ(-2deg) translateY(5px); }
-            100% { transform: scale(0.9) rotateZ(2deg) translateY(-5px); }
-        }
-
-        /* 动画状态：3D丝滑飞入 */
-        .drawing-active {
-            animation: cardFlyInSmooth 0.85s cubic-bezier(0.15, 0.85, 0.35, 1.1) forwards;
-        }
+        /* 动画状态保持不变 */
+        .shuffling { opacity: 0.6; filter: blur(1px); animation: shuffleSoft 0.2s infinite alternate ease-in-out; }
+        @keyframes shuffleSoft { 0% { transform: scale(0.9) rotateZ(-2deg) translateY(5px); } 100% { transform: scale(0.9) rotateZ(2deg) translateY(-5px); } }
+        .drawing-active { animation: cardFlyInSmooth 0.8s cubic-bezier(0.15, 0.85, 0.35, 1.1) forwards; }
         @keyframes cardFlyInSmooth {
-            0% { 
-                opacity: 0; 
-                transform: translate3d(0, 500px, -500px) rotateX(40deg) rotateY(-90deg) scale(0.5);
-                filter: blur(10px);
-            }
-            60% { opacity: 1; filter: blur(2px); }
-            100% { 
-                opacity: 1; 
-                transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1);
-                filter: blur(0);
-            }
+            0% { opacity: 0; transform: translate3d(0, 300px, -400px) rotateX(40deg) scale(0.6); filter: blur(10px); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0) rotateX(0deg) scale(1); filter: blur(0); }
         }
 
-        #q-content { font-size: 1.4rem; line-height: 1.6; color: var(--text-main); font-weight: 300; transition: opacity 0.4s; }
+        #q-content { font-size: 1.25rem; line-height: 1.6; color: var(--text-main); font-weight: 400; transition: opacity 0.4s; overflow-wrap: break-word; }
 
-        /* 底部控制区 */
-        .footer { padding-bottom: 50px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        /* 底部控制区 - 上移处理 */
+        .footer { 
+            padding-bottom: calc(60px + env(safe-area-inset-bottom)); 
+            display: flex; flex-direction: column; align-items: center; gap: 15px; 
+        }
         .btn-pulse {
-            padding: 18px 70px; background: rgba(255, 77, 109, 0.1);
-            border: 1px solid var(--primary-pink); color: var(--primary-pink); font-size: 1.1rem; letter-spacing: 3px;
+            padding: 16px 60px; background: rgba(255, 77, 109, 0.1);
+            border: 1px solid var(--primary-pink); color: var(--primary-pink); font-size: 1rem; letter-spacing: 3px;
             border-radius: 50px; cursor: pointer; transition: 0.4s; box-shadow: 0 0 20px rgba(255, 77, 109, 0.2);
         }
-        .btn-pulse:active { transform: scale(0.9); background: var(--primary-pink); color: #fff; }
-        .btn-pulse:disabled { opacity: 0.5; cursor: not-allowed; border-color: #555; color: #555; }
+        .btn-pulse:active { transform: scale(0.95); background: var(--primary-pink); color: #fff; }
+        .btn-pulse:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .footer-links { display: flex; gap: 50px; }
-        .link-item { font-size: 0.9rem; color: var(--text-sub); cursor: pointer; padding: 10px; transition: 0.3s; }
-        .link-item:active { color: #fff; }
+        .footer-links { display: flex; gap: 40px; }
+        .link-item { font-size: 0.85rem; color: var(--text-sub); cursor: pointer; padding: 10px; transition: 0.3s; }
 
-        /* 弹窗样式 */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(15px); opacity: 0; transition: 0.4s; }
+        /* 弹窗与历史记录样式调整 */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(15px); opacity: 0; transition: 0.4s; padding: 20px; }
         .modal.show { display: flex; opacity: 1; }
-        .modal-box { width: 85%; max-width: 340px; background: #1a0508; border: 1px solid #330a12; padding: 35px 25px; border-radius: 20px; text-align: center; }
-        .modal-title { color: var(--primary-pink); font-size: 1.1rem; margin-bottom: 20px; font-weight: bold; }
-        textarea { width: 100%; height: 150px; background: #0b0103; border: 1px solid #330a12; color: var(--soft-pink); padding: 12px; margin: 15px 0; border-radius: 10px; resize: none; }
-        .btn-group { display: flex; gap: 12px; margin-top: 20px; }
-        .btn-small { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; }
-        .btn-confirm { background: var(--primary-pink); color: white; }
-        .btn-cancel { background: transparent; border: 1px solid #330a12; color: #888; }
-        .history-list { max-height: 250px; overflow-y: auto; text-align: left; }
-        .history-item { padding: 12px 0; border-bottom: 1px solid #25080e; color: var(--text-sub); font-size: 0.85rem; }
+        .modal-box { width: 100%; max-width: 340px; background: #1a0508; border: 1px solid #330a12; padding: 30px 20px; border-radius: 20px; text-align: center; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-title { color: var(--primary-pink); font-size: 1rem; margin-bottom: 15px; font-weight: bold; }
+        textarea { width: 100%; height: 150px; background: #0b0103; border: 1px solid #330a12; color: var(--soft-pink); padding: 12px; margin: 10px 0; border-radius: 10px; resize: none; font-size: 0.9rem; }
+        .history-list { overflow-y: auto; flex: 1; text-align: left; }
+        .history-item { padding: 12px 5px; border-bottom: 1px solid #25080e; color: var(--text-sub); font-size: 0.85rem; }
     </style>
 </head>
 <body>
-
-    <audio id="draw-sound" src="data:audio/mp3;base64,SUQzBAAAAAABAFRYWFgAAAASAAADbWFqb3JfYnJhbmQAZGFzaABUWFhYAAAAEQAAA21pbm9yX3ZlcnNpb24AMABUWFhYAAAAHAAAA2NvbXBhdGlibGVfYnJhbmRzAGlzbzZtcDQxAFRTU0UAAAAPAAADTGF2ZjU5LjI3LjEwMAAAAAAAAAAAAAAA//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABSwAHCxEUGh4iJSgpMTQ2OTxBQ0ZIS01QUlVYW11fYmZnaWxucXN2eHqAg4WHiYuOkZKVmJudoKKkp6msrrGztbi7vcHDxcjJzc/R1Nbb3N7g4+Xn6ers7u/x8/b4+fr9/v8AAAAATGF2YzU5LjM3LjEwMAAAAAAAAAAAAAAAACQAAAAAAAAAAUswK78KAAAAAAAAAAAAAAAAAAAAAP/7kGQAAAKlQlS+CwAAAAA0goAABFwGLYjQQAIAAAADSDAAAAAc2SEDP2Yfd/wAAAAA0g4AAAABpM00002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/8s49//+s/9f/8//+//1n//+EAAAAACSklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n//////k0002j/5z//6f/zD//2f/y//4QAAAAASklZ/p+H/r/5f9f/7/9f/8s49//+s/9f/8//+//1n///"></audio>
 
     <canvas id="particle-canvas"></canvas>
     <div class="ambient-bg">
@@ -151,9 +127,9 @@
     <div id="settings-modal" class="modal">
         <div class="modal-box">
             <div class="modal-title">SETTINGS</div>
-            <div style="margin: 25px 0; color: #888; cursor:pointer" onclick="switchModal('settings-modal', 'import-modal')">导入新题库 ></div>
-            <div style="margin: 25px 0; color: #888;" onclick="toggleModal('contact-modal', true)">联系开发者 ></div>
-            <button class="btn-pulse" style="padding:10px 30px; font-size:0.8rem" onclick="toggleModal('settings-modal', false)">返回</button>
+            <div style="margin: 20px 0; color: #aaa; cursor:pointer" onclick="switchModal('settings-modal', 'import-modal')">导入题库 ></div>
+            <div style="margin: 20px 0; color: #aaa;" onclick="toggleModal('contact-modal', true)">联系开发者 ></div>
+            <button class="btn-pulse" style="padding:10px 30px; font-size:0.8rem; margin-top:10px" onclick="toggleModal('settings-modal', false)">返回</button>
         </div>
     </div>
 
@@ -161,9 +137,9 @@
         <div class="modal-box">
             <div class="modal-title">导入题库</div>
             <textarea id="import-area" placeholder="每行一个话题..."></textarea>
-            <div class="btn-group">
-                <button class="btn-small btn-confirm" onclick="saveImport()">保存</button>
-                <button class="btn-small btn-cancel" onclick="switchModal('import-modal', 'settings-modal')">取消</button>
+            <div class="btn-group" style="display:flex; gap:10px; margin-top:10px">
+                <button class="btn-pulse" style="flex:1; padding:10px; font-size:0.8rem" onclick="saveImport()">保存</button>
+                <button class="btn-pulse" style="flex:1; padding:10px; font-size:0.8rem; border-color:#444; color:#888" onclick="switchModal('import-modal', 'settings-modal')">取消</button>
             </div>
         </div>
     </div>
@@ -172,17 +148,17 @@
         <div class="modal-box">
             <div class="modal-title">历史记录</div>
             <div class="history-list" id="history-list"></div>
-            <button class="btn-pulse" style="margin-top:25px; padding:10px 40px; font-size:0.8rem" onclick="toggleModal('history-modal', false)">关闭</button>
+            <button class="btn-pulse" style="margin-top:15px; padding:10px 40px; font-size:0.8rem" onclick="toggleModal('history-modal', false)">关闭</button>
         </div>
     </div>
 
     <div id="reset-confirm-modal" class="modal">
         <div class="modal-box">
             <div class="modal-title">重置确认</div>
-            <p style="color:#888; font-size:0.9rem;">确定要清空所有记录并恢复默认吗？</p>
-            <div class="btn-group">
-                <button class="btn-small btn-confirm" style="background:#cc0033" onclick="realReset()">确认重置</button>
-                <button class="btn-small btn-cancel" onclick="toggleModal('reset-confirm-modal', false)">取消</button>
+            <p style="color:#888; font-size:0.85rem; line-height:1.5">确定要清空所有抽取记录吗？</p>
+            <div style="display:flex; gap:10px; margin-top:20px">
+                <button class="btn-pulse" style="flex:1; padding:10px; font-size:0.8rem; border-color:#cc0033; color:#cc0033" onclick="realReset()">确认</button>
+                <button class="btn-pulse" style="flex:1; padding:10px; font-size:0.8rem; border-color:#444; color:#888" onclick="toggleModal('reset-confirm-modal', false)">取消</button>
             </div>
         </div>
     </div>
@@ -191,75 +167,103 @@
         <div class="modal-box">
             <div class="modal-title">开发者信息</div>
             <p style="color:var(--text-sub); font-size: 0.9rem;">QQ: 771668908</p>
-            <button class="btn-small btn-confirm" style="width:100%" onclick="toggleModal('contact-modal', false)">知道了</button>
+            <button class="btn-pulse" style="width:100%; padding:10px; font-size:0.8rem" onclick="toggleModal('contact-modal', false)">知道了</button>
         </div>
     </div>
 
     <script>
         const STORAGE_KEY_Q = 'echo_questions';
         const STORAGE_KEY_D = 'echo_drawn';
-        let defaultQs = ["此时此刻，你最想对我做什么？", "如果我们的爱是一种颜色，你觉得是什么？", "分享一个你从未对我说过的幻想。", "你最喜欢我身体的哪个部位？", "闭上眼，描述一下你现在脑海里的我。"];
+        
+        // 预设的大量问题
+        const defaultQs = [
+            "对我的第一印象是什么？(外貌、感觉)", "没见到我的时候觉得我是什么类型的人？", "第一次约会时对我印象有改变吗？",
+            "第一次觉得 “有点心动” 是什么时候 / 什么场景？", "什么时候开始觉得 “喜欢上我了”？", "被告白 / 告白时的心情是怎样的？",
+            "觉得我们在一起是 “谁追的谁”？", "有想过我们真的会在一起吗？", "朋友 / 家人第一次听说我时，他们的反应是什么？",
+            "第一次牵手 / 拥抱 / 接吻是什么感觉？", "用三个词形容我们在一起时你内心的状态。", "你觉得我们一起做的第一件特别的事是什么？",
+            "你觉得我们哪一点最 “有缘分”？", "有什么事情是你回想起来觉得应该重来一次的？", "你觉得在一起之后有哪些事情是你可以接受但有点不舒服/需要适应的？",
+            "最喜欢我哪一点？(外貌 / 性格 / 习惯等)", "最不喜欢我哪一点？(小缺点或习惯)", "最喜欢我叫你什么昵称？",
+            "觉得我什么时候最性感？", "吵架时，你通常是先冷静还是先爆发？", "吵架后，通常是谁先道歉 / 和好？",
+            "你觉得我们沟通顺畅吗？为什么？", "最喜欢和我一起做什么事情？", "最不喜欢和我一起做什么事情？",
+            "最希望收到什么样的礼物？", "在一起时，最想做的事情是什么？", "介意对方看手机吗？",
+            "觉得我们之间有足够的个人空间吗？", "家人对我的态度如何？满意吗？", "对我的家人印象如何？",
+            "同居 / 结婚后，家务怎么分工？", "当前的经济情况如何？有负债吗？", "金钱观/消费观如何？什么样的消费算奢侈消费？",
+            "会为了对方去尝试自己原本不感兴趣的事情吗？", "用三个词形容我的性格。", "用三个词形容你自己的性格。",
+            "觉得我们性格互补还是相似？", "你觉得我最大的优点是什么？", "你觉得我最大的缺点是什么？",
+            "你觉得你自己最大的优点是什么？", "你觉得你自己最大的缺点是什么？", "你最看重伴侣的什么品质？",
+            "你觉得我最符合你理想伴侣的特质是什么？", "你觉得我最不符合你理想伴侣的特质是什么？", "你的爱情观是怎样的？",
+            "对 “忠诚” 的定义是什么？底线在哪里？", "如何看待异性朋友？交往的界限在哪里？", "遇到矛盾和压力时，你更倾向于倾诉还是自己消化？",
+            "你更向往平淡稳定的生活，还是充满变化和冒险的生活？", "对未来的职业和生活有什么规划？", "金钱对你来说意味着什么？(安全感？自由？工具？)",
+            "对于仪式感的期待是什么样的？", "你相信灵魂伴侣 / 命中注定吗？你觉得我们是吗？", "你认为一段长久关系最重要的基石是什么？",
+            "喜欢什么样的亲密接触方式？(拥抱、亲吻等)", "认为我们目前的亲密关系 (身体 / 情感) 质量如何？", "有什么小性癖？",
+            "理想的婚礼是什么样子的？", "你觉得什么样的程度或者状态两个人才可以结婚？", "想要孩子吗？想要几个？对育儿有什么看法？",
+            "理想的居住地是哪里？(城市 / 乡村？国内 / 国外？)", "想象一下十年后的我们，会是什么样子？", "如果中了500万，最想做什么？",
+            "如果遇到比我更优秀 / 更适合你的人，你会怎么做？", "你会因为什么原因而选择结束这段关系？", "你相信我们会一直走下去吗？为什么？",
+            "为了维持这段关系，你愿意做出哪些改变或牺牲？", "你觉得我最需要你支持的地方是什么？", "你觉得我能给你最大的支持是什么？",
+            "有什么事是你一直想和我一起做但还没做的？", "有什么事是你想做但可能我不会支持的？为什么？", "在你心中，我目前处于什么位置？",
+            "如果交换身体一天，你最想用我的身体做什么？", "如果变成动物，你觉得我和你会是什么动物？", "如果拍一部关于我们的电影，希望谁来演我们？",
+            "用一个颜色来形容我们的关系，是什么颜色？为什么？", "如果有一天我突然失忆了，你会怎么让重新爱上你？", "如果必须选一个超级英雄能力 (只能一人有)，你希望谁拥有？什么能力？",
+            "你和前任分开的核心原因是什么？这段经历对你现在的感情观有哪些影响？", "你是否还与前任保持联系？如果有，联系的频率和边界是什么？", "是否为前任做过伤害身体的事情？",
+            "与前任的相处中让你记忆最深的瞬间是什么？", "如果前任突然联系你，说想和你见一面，你会答应吗？会提前告诉我吗？", "当初和前任在一起时，你对未来的规划里有 TA 吗？",
+            "前任送的哪些东西还在？为什么不扔？", "你如何看待男主外女主内的家庭关系？", "你如何看待女权主义？",
+            "你父母的相处模式是什么样的，对你有什么影响？", "你的家人是否有对你的伴侣提出过明确要求？如果我不符合，你会如何沟通？", "目前的工作对你来说是 “谋生手段” 还是 “人生追求”？未来 3 年有明确的晋升或转型计划吗？",
+            "你希望我在事业上对你提供哪些支持（如时间、资源、情绪陪伴）？", "如果我与你的职业规划产生冲突时（如异地调动），你会如何优先级排序？", "你觉得对于我们的关系来说最危险/不稳定的因素是什么？",
+            "如果我们吵架，你会是冷战型还是讲道理型？", "冷暴力和口不择言你更讨厌/害怕哪一种？", "如果我喝醉了，你觉得我会变成哪一挂？"
+        ];
+
         let questions = JSON.parse(localStorage.getItem(STORAGE_KEY_Q)) || defaultQs;
         let drawn = JSON.parse(localStorage.getItem(STORAGE_KEY_D)) || [];
 
-        // 1. 粒子系统
+        // 1. 粒子系统 (轻量化处理)
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
-        class P { constructor(x, y) { this.x = x; this.y = y; this.size = Math.random()*3+1; this.sx = Math.random()*2-1; this.sy = Math.random()*2-1; this.life = 100; } u() { this.x += this.sx; this.y += this.sy; this.life -= 2; this.size *= 0.96; } d() { ctx.fillStyle = `rgba(255, 77, 109, ${this.life/200})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, 7); ctx.fill(); } }
+        class P { constructor(x, y) { this.x = x; this.y = y; this.size = Math.random()*2+1; this.sx = Math.random()*1.5-0.75; this.sy = Math.random()*1.5-0.75; this.life = 100; } u() { this.x += this.sx; this.y += this.sy; this.life -= 2; } d() { ctx.fillStyle = `rgba(255, 77, 109, ${this.life/200})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, 7); ctx.fill(); } }
         function handleIn(e) { let x = e.clientX || (e.touches && e.touches[0].clientX); let y = e.clientY || (e.touches && e.touches[0].clientY); if(x && y) for(let i=0;i<2;i++) particles.push(new P(x, y)); }
         window.addEventListener('mousemove', handleIn); window.addEventListener('touchmove', handleIn);
-        function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach((p, i) => { p.u(); p.d(); if(p.life<=0) particles.splice(i, 1); }); requestAnimationFrame(anim); }
+        function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); for(let i=particles.length-1; i>=0; i--) { particles[i].u(); particles[i].d(); if(particles[i].life<=0) particles.splice(i, 1); } requestAnimationFrame(anim); }
         anim();
 
-        // 2. 核心抽卡逻辑
+        // 2. 抽卡核心逻辑
         const mainCard = document.getElementById('main-card');
         const qContent = document.getElementById('q-content');
         const drawBtn = document.getElementById('draw-btn');
-        const audio = document.getElementById('draw-sound');
 
-        // 初始化显示
         mainCard.style.opacity = "1";
 
         function draw() {
             let rem = questions.filter(q => !drawn.includes(q));
-            if(rem.length === 0) { qContent.innerText = "话题已抽完"; return; }
+            if(rem.length === 0) { 
+                qContent.innerText = "没有更多问题了"; 
+                return; 
+            }
 
-            // 第一阶段：进入洗牌状态
             drawBtn.disabled = true;
             mainCard.classList.remove('drawing-active');
             mainCard.classList.add('shuffling');
             qContent.style.opacity = "0"; 
 
-            // 第二阶段：物理反馈抛出
             setTimeout(() => {
                 mainCard.classList.remove('shuffling');
-                void mainCard.offsetWidth; // 强制刷新触发动画
+                void mainCard.offsetWidth;
 
-                // 播放音效
-                audio.currentTime = 0;
-                audio.play().catch(()=>{});
-
-                // 获取新话题
                 let res = rem[Math.floor(Math.random() * rem.length)];
                 drawn.push(res);
                 localStorage.setItem(STORAGE_KEY_D, JSON.stringify(drawn));
                 
-                // 执行3D飞入
                 qContent.innerText = res;
                 mainCard.classList.add('drawing-active');
 
-                // 第三阶段：文字延时呈现
                 setTimeout(() => { 
                     qContent.style.opacity = "1"; 
                     drawBtn.disabled = false;
-                }, 400);
-            }, 600);
+                }, 300);
+            }, 500);
         }
 
-        // 3. 弹窗与设置逻辑
+        // 3. UI 交互逻辑
         function toggleModal(id, show) {
             let m = document.getElementById(id);
             if(show) { m.style.display = 'flex'; setTimeout(()=>m.classList.add('show'), 10); }
@@ -281,13 +285,12 @@
         function renderHistory() { document.getElementById('history-list').innerHTML = drawn.slice().reverse().map(q => `<div class="history-item">${q}</div>`).join('') || "<div class='history-item'>暂无记录</div>"; }
         function realReset() { localStorage.clear(); location.reload(); }
 
-        // 背景流动卡片生成
+        // 背景卡片生成
         const river = document.getElementById('card-river');
-        for(let i=0; i<15; i++) {
+        for(let i=0; i<12; i++) {
             let c = document.createElement('div'); c.className = 'phantom-card';
             c.style.setProperty('--x', (Math.random()*120-10)+'vw');
             c.style.setProperty('--z', (Math.random()*-500)+'px');
-            c.style.setProperty('--o', (Math.random()*0.15));
             c.style.animationDuration = (Math.random()*12+8)+'s';
             c.style.animationDelay = (Math.random()*-20)+'s';
             river.appendChild(c);
